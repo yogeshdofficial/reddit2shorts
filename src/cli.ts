@@ -19,8 +19,9 @@ program.name("reddit2shorts").description("Make youtube shorts from reddit posts
     option("-s --subreddits <subreddit...>", "List of subreddits to choose text post from", subreddits).
     option("-r, --random ", "Make short from a random post").
     option("-p, --postId <postId>", "Make short from the post with id").
+    option("-c --commentsCount <commentsCount>", "Number of comments to include", "10").
     option("-t --tts <tts>", "Which tts to use", "google").
-    option("-u --upload <platform>", "Upload to platform", "youtube").
+    option("-u --upload <platform>", "Upload to platform").
     option("-g --tags <tags...>", "Tags for video title", ["shorts", "reddit", "redditstories"]).
     option("-a --bgAudio <bgAudio>", "Background audio", "https://www.youtube.com/watch?v=xy_NKN75Jhw").
     option("-v --bgVideo <bgVideo>", "Background video", "https://www.youtube.com/watch?v=XBIaqOm0RKQ")
@@ -68,17 +69,23 @@ async function main() {
     await downloadBackgroundAssets(options.bgVideo, options.bgAudio)
     spinner.succeed("Background assets ready")
 
-    const output = await createShortFromPost({ post, reddit, tts, commentsCount: 10 });
+    const output = await createShortFromPost({ post, reddit, tts, commentsCount: options.commentsCount });
 
     if (options.upload == "youtube") {
         const shortTitle = await getShortTitle(post.title, post.subreddit_name_prefixed)
+        // console.log(shortTitle);
+
         if (!shortTitle) {
             console.error("Coudn't get short title");
             process.exit(1);
         }
-        const spinner = ora("Uploading to youtube").start()
-        const url = await uploadToYoutube(output, `${shortTitle}`, "", [post.subreddit_name_prefixed.split("/")[1], ...options.tags])
-        spinner.succeed(`Uploaded to youtube: ${url}`)
+        try {
+            const spinner = ora("Uploading to youtube").start()
+            const url = await uploadToYoutube(output, `${shortTitle}`, "", [post.subreddit_name_prefixed.split("/")[1], ...options.tags])
+            spinner.succeed(`Uploaded to youtube: ${url}`)
+        } catch {
+            spinner.fail(`Error uploading to youtube`)
+        }
     }
 }
 

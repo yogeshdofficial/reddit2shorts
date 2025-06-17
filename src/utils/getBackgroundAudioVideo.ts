@@ -16,8 +16,8 @@ async function fileExists(filePath: string) {
 
 export async function downloadBackgroundAssets(videoUrl: string, audioUrl: string) {
     const shortsDir = "shorts"
-    const mp3Path = path.join(shortsDir, 'background.mp3');
-    const mp4Path = path.join(shortsDir, 'background.mp4');
+    const mp3Path = path.join(shortsDir, 'audio.mp3');
+    const mp4Path = path.join(shortsDir, 'video.mp4');
 
     try {
         // Ensure 'shorts/' directory exists
@@ -25,14 +25,14 @@ export async function downloadBackgroundAssets(videoUrl: string, audioUrl: strin
 
         // Download MP3 if it doesn't exist
         if (!(await fileExists(mp3Path))) {
-            await execAsync(`yt-dlp -x --audio-format mp3 -o "${shortsDir}/background.%(ext)s" "${audioUrl}"`);
+            await execAsync(`yt-dlp -x --audio-format mp3 -o "${shortsDir}/bgAudio.%(ext)s" "${audioUrl}"`);
         } else {
             // console.log('MP3 already exists.');
         }
 
         // Download MP4 if it doesn't exist
         if (!(await fileExists(mp4Path))) {
-            await execAsync(`yt-dlp -f bestvideo+bestaudio --merge-output-format mp4 -o "${shortsDir}/background.%(ext)s" "${videoUrl}"`);
+            await execAsync(`yt-dlp -f bestvideo+bestaudio --merge-output-format mp4 -o "${shortsDir}/bgVideo.%(ext)s" "${videoUrl}"`);
         } else {
             // console.log('MP4 already exists.');
         }

@@ -44,7 +44,7 @@ export async function uploadToYoutube(videoPath: string, title: string, descript
         let message = "Unkown error"
         if (error instanceof Error)
             message = error.message
-        console.error('❌ Error uploading video:', message);
+        throw error
 
     }
 }

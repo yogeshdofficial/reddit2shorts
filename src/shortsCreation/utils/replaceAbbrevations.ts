@@ -19,7 +19,8 @@ export function replaceRedditAbbreviations(text: string) {
     "\\bNTA\\b": "Not the asshole",
     "\\bWTF\\b": "What the frick",
     "\\bTIFU\\b": "Today I fricked up",
-    "\\LMAO\\b": "Laughing my arse off",
+    "\\bLMAO\\b": "Laughing my arse off",
+    "\\bLPT\\b": "Life pro tips",
   };
 
   for (const abbr in replacements) {

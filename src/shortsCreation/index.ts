@@ -74,14 +74,14 @@ export async function createShortFromPost({
     const spinner7 = ora("Adding background music").start()
     await addBackgroundMusic(
         `${videoFolderPath}/combinedVideo.mp4`,
-        `${shortsFolderPath}/background.mp3`,
+        `${shortsFolderPath}/bgAudio.mp3`,
         `${videoFolderPath}/combinedVideoWithBgAudio.mp4`
     );
     spinner7.succeed("Background music added")
 
     const spinner8 = ora("Adding background video (this may take a few minutes)").start()
     await addBackgroundVideo(
-        `${shortsFolderPath}/background.mp4`,
+        `${shortsFolderPath}/bgVideo.mp4`,
         `${videoFolderPath}/combinedVideoWithBgAudio.mp4`,
         `${postFolderPath}/output.mp4`
     );

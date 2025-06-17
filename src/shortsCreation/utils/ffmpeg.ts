@@ -1,4 +1,4 @@
-import ffmpeg from "../../config/ffmpeg";
+import ffmpeg from "fluent-ffmpeg";
 import { tmpdir } from "os";
 import { writeFile, unlink, readFile } from "fs/promises";
 import { randomUUID } from "crypto";
@@ -85,19 +85,17 @@ export async function addBackgroundVideo(
         ])
         .outputOptions([
           "-map [outv]",
-          "-map 1:a",           // use audio from overlay
-          "-c:v libx264",       // H.264 software encoder
-          "-preset medium",       // Better compression at same quality (slower)
-          "-crf 19",            // Very high visual quality
-          "-pix_fmt yuv420p",   // Ensures compatibility
-          "-profile:v high",    // Improve decoding compatibility & quality
-          "-level 4.2",         // Recommended for 1080p60
-          "-threads 0",         // Use all available CPU cores
+          "-map 1:a",
+          "-c:v libx264",
+          "-threads 0",
           "-c:a aac",
-          "-b:a 192k",          // Slightly higher audio quality
+          "-b:a 128k",
           "-movflags +faststart",
           "-shortest",
+          "-crf", "21",
+          "-preset", "medium",
         ])
+
         .on("error", (err) => {
           reject(err);
         })
