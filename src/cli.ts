@@ -11,6 +11,7 @@ import { createShortFromPost } from "./shortsCreation";
 import { uploadToYoutube } from "./upload";
 import { getShortTitle } from "./utils/getShortTitle";
 import ora from "ora";
+import { downloadBackgroundAssets } from "./utils/getBackgroundAudioVideo";
 
 const program = new Command()
 
@@ -20,14 +21,16 @@ program.name("reddit2shorts").description("Make youtube shorts from reddit posts
     option("-p, --postId <postId>", "Make short from the post with id").
     option("-t --tts <tts>", "Which tts to use", "google").
     option("-u --upload <platform>", "Upload to platform", "youtube").
-    option("-a --tags <tags...>", "Tags for video title", ["shorts", "reddit", "redditstories"])
+    option("-g --tags <tags...>", "Tags for video title", ["shorts", "reddit", "redditstories"]).
+    option("-a --bgAudio <bgAudio>", "Background audio", "https://www.youtube.com/watch?v=xy_NKN75Jhw").
+    option("-v --bgVideo <bgVideo>", "Background video", "https://www.youtube.com/watch?v=XBIaqOm0RKQ")
 
 program.parse(process.argv);
 
 const options = program.opts();
 
 async function main() {
-    if (!options.id && !options.random) {
+    if (!options.postId && !options.random) {
         console.error("Error: You must provide either --id <postId> or --random");
         process.exit(1);
     }
@@ -61,16 +64,20 @@ async function main() {
         process.exit(1);
     }
 
-    const shortTitle = await getShortTitle(post.title, post.subreddit_name_prefixed)
+    const spinner = ora("Getting background assets ready").start()
+    await downloadBackgroundAssets(options.bgVideo, options.bgAudio)
+    spinner.succeed("Background assets ready")
+
     const output = await createShortFromPost({ post, reddit, tts, commentsCount: 10 });
 
     if (options.upload == "youtube") {
+        const shortTitle = await getShortTitle(post.title, post.subreddit_name_prefixed)
         if (!shortTitle) {
             console.error("Coudn't get short title");
             process.exit(1);
         }
         const spinner = ora("Uploading to youtube").start()
-        const url = await uploadToYoutube(output, shortTitle, "", [post.subreddit_name_prefixed.split("/")[1], ...options.tags])
+        const url = await uploadToYoutube(output, `${shortTitle}`, "", [post.subreddit_name_prefixed.split("/")[1], ...options.tags])
         spinner.succeed(`Uploaded to youtube: ${url}`)
     }
 }

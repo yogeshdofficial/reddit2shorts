@@ -85,13 +85,16 @@ export async function addBackgroundVideo(
         ])
         .outputOptions([
           "-map [outv]",
-          "-map 1:a",
-          "-c:v libx264",
-          "-preset fast",    // Faster than 'slow', still good compression
-          "-crf 20",         // Better than 23, but faster than 18
-          "-threads 0",      // Use all available CPU cores
+          "-map 1:a",           // use audio from overlay
+          "-c:v libx264",       // H.264 software encoder
+          "-preset medium",       // Better compression at same quality (slower)
+          "-crf 19",            // Very high visual quality
+          "-pix_fmt yuv420p",   // Ensures compatibility
+          "-profile:v high",    // Improve decoding compatibility & quality
+          "-level 4.2",         // Recommended for 1080p60
+          "-threads 0",         // Use all available CPU cores
           "-c:a aac",
-          "-b:a 128k",
+          "-b:a 192k",          // Slightly higher audio quality
           "-movflags +faststart",
           "-shortest",
         ])
