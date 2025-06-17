@@ -1,4 +1,6 @@
 ignoredBuiltDependencies:
   - puppeteer
+
 onlyBuiltDependencies:
+  - ffmpeg-static
   - protobufjs

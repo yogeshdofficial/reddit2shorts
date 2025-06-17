@@ -1,4 +1,4 @@
-import ffmpeg from "fluent-ffmpeg";
+import ffmpeg from "../../config/ffmpeg";
 import { tmpdir } from "os";
 import { writeFile, unlink, readFile } from "fs/promises";
 import { randomUUID } from "crypto";
