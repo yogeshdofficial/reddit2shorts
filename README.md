@@ -4,6 +4,12 @@
 Make youtube shorts from reddit posts
 
 
+## Demo
+
+
+https://github.com/user-attachments/assets/3fb76b45-5695-41e2-93d0-03a2b515aff4
+
+
 ## Installation
 
 ### dependencies 
@@ -18,7 +24,7 @@ install [yt_dlp](https://github.com/yt-dlp/yt-dlp) and add it to path
 ```
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to your .env file
+To run this project, you will need to rename .env.example to .env add the following
 
 get from https://www.reddit.com/prefs/apps, set type to personal use script
 `REDDIT_CLIENT_ID`  
@@ -60,12 +66,6 @@ Options:
   -v --bgVideo <bgVideo>              Background video (default: "https://www.youtube.com/watch?v=XBIaqOm0RKQ")
   -h, --help                          display help for command
 ```
-
-
-## Demo
-
-Insert gif or link to demo
-
 
 ## Authors
 
