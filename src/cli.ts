@@ -1,17 +1,17 @@
 import { Command } from "commander";
 import "dotenv/config";
-import env from "./config/env";
-import { SnoowrapReddit } from "./reddit/impl/snoowrapReddit";
-import { subreddits } from "./constants/subreddits";
-import { GoogleCloudTts } from "./tts/impl/googleCloudTts";
-import { Submission } from "snoowrap";
-import { TtsInterface } from "./tts/tts";
-import { TiktokTts } from "./tts/impl/tiktokTts";
-import { createShortFromPost } from "./shortsCreation";
-import { uploadToYoutube } from "./upload";
-import { getShortTitle } from "./utils/getShortTitle";
 import ora from "ora";
+import { Submission } from "snoowrap";
+import env from "./config/env";
+import { subreddits } from "./constants/subreddits";
+import { SnoowrapReddit } from "./reddit/impl/snoowrapReddit";
+import { createShortFromPost } from "./shortsCreation";
+import { GoogleCloudTts } from "./tts/impl/googleCloudTts";
+import { TiktokTts } from "./tts/impl/tiktokTts";
+import { TtsInterface } from "./tts/tts";
+import { uploadToYoutube } from "./upload";
 import { downloadBackgroundAssets } from "./utils/getBackgroundAudioVideo";
+import { getShortTitle } from "./utils/getShortTitle";
 
 const program = new Command()
 
@@ -22,9 +22,15 @@ program.name("reddit2shorts").description("Make youtube shorts from reddit posts
     option("-c --commentsCount <commentsCount>", "Number of comments to include", "10").
     option("-t --tts <tts>", "Which tts to use", "google").
     option("-u --upload <platform>", "Upload to platform").
+    option("--gTtsVoice <gTtsVoice>", "Voice of google tts", "en-US-Wavenet-F",).
+    option("--gTtsLang <gTtsLang>", "Language of google tts","en-US",).
+    option("--gTtsGender <gTtsGender>", "Gender of google tts", "FEMALE").
+    option("-x --category <category>", "Category to choose random from","hot").
+    option("-y --timeSpan <timeSpan>", "Timespan to choose random from(only for categories top and controversial)","day").
     option("-g --tags <tags...>", "Tags for video title", ["shorts", "reddit", "redditstories"]).
     option("-a --bgAudio <bgAudio>", "Background audio", "https://www.youtube.com/watch?v=xy_NKN75Jhw").
     option("-v --bgVideo <bgVideo>", "Background video", "https://www.youtube.com/watch?v=XBIaqOm0RKQ")
+
 
 program.parse(process.argv);
 
@@ -45,7 +51,7 @@ async function main() {
     let post: Submission | undefined;
     let tts: TtsInterface | undefined;
     if (options.random) {
-        post = await reddit.getTextOnlyPostFromList(options.subreddits)
+        post = await reddit.getTextOnlyPostFromList(options.subreddits,options.category,options.timeSpan)
     } else if (options.postId) {
         post = await reddit.getPost(options.postId)
     }
@@ -56,7 +62,7 @@ async function main() {
     }
 
     if (options.tts == "google")
-        tts = new GoogleCloudTts();
+        tts = new GoogleCloudTts(options.gTtsLang,options.gTtsVoice,options.gTtsGender);
     else if (options.tts == "tiktok")
         tts = new TiktokTts()
 
@@ -86,6 +92,7 @@ async function main() {
         } catch {
             spinner.fail(`Error uploading to youtube`)
         }
+        
     }
 }
 
