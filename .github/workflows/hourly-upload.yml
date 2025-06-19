@@ -1,0 +1,64 @@
+name: Upload random post to youtube
+
+on:
+  schedule:
+    - cron: '0 * * *  *' # Every hour
+  worlkflow_dispatch:
+    inputs:
+      postId:
+        description: "optional reddit post id"
+        required: false
+        default: ""
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    environment: upload
+  
+  env:
+      REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+      REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+      REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+      REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_ACCESS_TOKEN: ${{ secrets.GOOGLE_ACCESS_TOKEN }}
+      GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+
+      TIKTOK_SESSION_ID: ${{ secrets.TIKTOK_SESSION_ID }}
+
+  steps:
+    - name: Checkout code
+      uses: action/checkout@v3
+
+    - name: Set up bun
+      uses: oven-sh/setup-bun@v1
+
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Write credentials to creds.json
+      run: |
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > creds.json
+
+    - name: Manual trigger (with postId)
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.postId != '' }}
+      run: |
+          echo "Manual trigger detected with postId: ${{ github.event.inputs.postId }}"
+          bun src/cli.ts -p ${{github.event.inputs.postId}} -u youtube
+        
+    - name: Manual trigger (without postId)
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.postId == '' }}
+      run: |
+          echo "Manual trigger detected without postId"
+          bun src/cli.ts -r -u youtube
+    
+    - name: Run CLI normally (no postId)
+      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.postId == '' }}
+      run: |
+          echo "Running default flow (scheduled or manual without postId)"
+          bun src/cli.ts -r -u youtube
