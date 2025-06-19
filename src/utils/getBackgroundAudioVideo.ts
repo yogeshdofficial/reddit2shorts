@@ -42,6 +42,7 @@ export async function downloadBackgroundAssets(videoUrl: string, audioUrl: strin
         if (error instanceof Error)
             message = error.message
         console.error('Error:', message);
+        throw err;
     }
 }
 
