@@ -28,8 +28,8 @@ program.name("reddit2shorts").description("Make youtube shorts from reddit posts
     option("-x --category <category>", "Category to choose random from","hot").
     option("-y --timeSpan <timeSpan>", "Timespan to choose random from(only for categories top and controversial)","day").
     option("-g --tags <tags...>", "Tags for video title", ["shorts", "reddit", "redditstories"]).
-    option("-a --bgAudio <bgAudio>", "Background audio", "https://www.youtube.com/watch?v=xy_NKN75Jhw").
-    option("-v --bgVideo <bgVideo>", "Background video", "https://www.youtube.com/watch?v=XBIaqOm0RKQ")
+    option("-a --bgAudio <bgAudio...>", "Background audio", ["https://www.youtube.com/watch?v=xy_NKN75Jhw"]).
+    option("-v --bgVideo <bgVideo...>", "Background video", ["https://www.youtube.com/watch?v=XBIaqOm0RKQ"])
 
 
 program.parse(process.argv);
@@ -72,7 +72,7 @@ async function main() {
     }
 
     const spinner = ora("Getting background assets ready").start()
-    await downloadBackgroundAssets(options.bgVideo, options.bgAudio)
+    await downloadBackgroundAssets(options.bgVideo[Math.floor(Math.random() * options.bgVideo.length)], options.bgAudio[Math.floor(Math.random() * options.bgAudio.length)])
     spinner.succeed("Background assets ready")
 
     const output = await createShortFromPost({ post, reddit, tts, commentsCount: options.commentsCount });
