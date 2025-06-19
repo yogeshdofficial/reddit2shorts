@@ -33,7 +33,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: action/checkout@v3
+      uses: actions/checkout@v3
 
     - name: Set up bun
       uses: oven-sh/setup-bun@v1
