@@ -3,7 +3,7 @@ name: Upload random post to youtube
 on:
   schedule:
     - cron: '0 * * *  *' # Every hour
-  worlkflow_dispatch:
+  workflow_dispatch:
     inputs:
       postId:
         description: "optional reddit post id"
