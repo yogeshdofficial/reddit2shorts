@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: upload
   
-  env:
+    env:
       REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
       REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
       REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
@@ -31,7 +31,7 @@ jobs:
 
       TIKTOK_SESSION_ID: ${{ secrets.TIKTOK_SESSION_ID }}
 
-  steps:
+    steps:
     - name: Checkout code
       uses: action/checkout@v3
 
