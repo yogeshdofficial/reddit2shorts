@@ -14,6 +14,8 @@ https://github.com/user-attachments/assets/3fb76b45-5695-41e2-93d0-03a2b515aff4
 
 ### dependencies 
 install [yt_dlp](https://github.com/yt-dlp/yt-dlp) and add it to path
+install ffmpeg
+
 
 ```bash
   git clone https://github.com/yogeshdofficial/reddit2shorts
@@ -32,7 +34,8 @@ get from https://www.reddit.com/prefs/apps, set type to personal use script
 `REDDIT_USERNAME`  
 `REDDIT_PASSWORD`    
 
- get from [google cloud console](https://console.cloud.google.com/) ->IAM->service account ->create service account ->manage kes ->create and download key as json ans point this env variable to that file 
+ get from [google cloud console](https://console.cloud.google.com/) ->IAM->service account ->create service account ->manage kes ->create and download key as json and set env value to content of the json file  
+ 
 `GOOGLE_APPLICATION_CREDENTIALS`  
 
 get from https://aistudio.google.com/app/apikey  
@@ -42,13 +45,15 @@ get by following this [article](https://amandevelops.medium.com/how-to-generate-
 `GOOGLE_CLIENT_ID`  
 `GOOGLE_CLIENT_SECRET`  
 `GOOGLE_ACCESS_TOKEN`  
-`GOOGLE_REFRESH_TOKEN` 
+`GOOGLE_REFRESH_TOKEN`  
+
 get by installing [extension](https://cookie-editor.com/) and getting cookie from tiktok webiste's sessionid  
 `TIKTOK_SESSION_ID`  
 ## Usage/Examples
 
 ```bash
 Usage: reddit2shorts [options]
+example: bun src/cli.ts --random --upload youtube
 
 Make youtube shorts from reddit posts
 
