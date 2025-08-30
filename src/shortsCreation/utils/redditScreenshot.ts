@@ -10,7 +10,7 @@ export async function screenshotComment(
   outputPath: string
 ) {
   const browser = await puppeteer.launch({
-    headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'],  executablePath: '/usr/bin/google-chrome', // or chromium-browser
+    headless: true
   });
   const page = await browser.newPage();
   await page.setContent(
