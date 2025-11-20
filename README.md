@@ -1,80 +1,129 @@
+<!--
+	README: professional, concise, and actionable.
+	- Overview
+	- Features
+	- Quick start (install + run)
+	- Configuration (environment variables)
+	- Usage examples
+	- Troubleshooting & contributing
+-->
 
 # reddit2shorts
 
-Make youtube shorts from reddit posts
+Create short, shareable YouTube Shorts from Reddit text posts (title + top comments). The project automates:
 
+- Fetching text posts and top comments from Reddit
+- Generating speech using TTS providers (Google Cloud, TikTok)
+- Creating screenshots for posts/comments
+- Composing and combining video segments with `ffmpeg`
+- Optional upload to YouTube
 
-## Demo
+## Features
 
+- Modular TTS support (Google Cloud, TikTok)
+- Reusable screenshots for clean visuals
+- Configurable comment count and background media
+- Upload integration for YouTube
 
-https://github.com/user-attachments/assets/3fb76b45-5695-41e2-93d0-03a2b515aff4
+---
 
+## Quick start
 
-## Installation
+Prerequisites
 
-### dependencies 
-install [yt_dlp](https://github.com/yt-dlp/yt-dlp) and add it to path
-install ffmpeg
+- `node` (v16+ or v18+ recommended)
+- `pnpm` or `npm`
+- `ffmpeg` (available on PATH)
+- `yt-dlp` or `youtube-dl` (for background assets)
 
-
-```bash
-  git clone https://github.com/yogeshdofficial/reddit2shorts
-  cd reddit2shorts
-  mv .env.example .env # populate it
-  npm install
-  ts-node src/cli.ts --random --upload youtube
-```
-## Environment Variables
-
-To run this project, you will need to rename .env.example to .env add the following
-
-get from https://www.reddit.com/prefs/apps, set type to personal use script
-`REDDIT_CLIENT_ID`  
-`REDDIT_CLIENT_SECRET`  
-`REDDIT_USERNAME`  
-`REDDIT_PASSWORD`    
-
- get from [google cloud console](https://console.cloud.google.com/) ->IAM->service account ->create service account ->manage kes ->create and download key as json and set env value to content of the json file  
- 
-`GOOGLE_APPLICATION_CREDENTIALS`  
-
-get from https://aistudio.google.com/app/apikey  
-`GEMINI_API_KEY`  
-
-get by following this [article](https://amandevelops.medium.com/how-to-generate-refresh-token-and-use-them-to-access-google-api-f7565413c548)   
-`GOOGLE_CLIENT_ID`  
-`GOOGLE_CLIENT_SECRET`  
-`GOOGLE_ACCESS_TOKEN`  
-`GOOGLE_REFRESH_TOKEN`  
-
-get by installing [extension](https://cookie-editor.com/) and getting cookie from tiktok webiste's sessionid  
-`TIKTOK_SESSION_ID`  
-## Usage/Examples
+Install and prepare
 
 ```bash
-Usage: reddit2shorts [options]
-example: bun src/cli.ts --random --upload youtube
-
-Make youtube shorts from reddit posts
-
-Options:
-  -V, --version                       output the version number
-  -s --subreddits <subreddit...>      List of subreddits to choose text post from (default:
-                                      ["AskReddit","TIFU"])
-  -r, --random                        Make short from a random post
-  -p, --postId <postId>               Make short from the post with id
-  -c --commentsCount <commentsCount>  Number of comments to include (default: "10")
-  -t --tts <tts>                      Which tts to use (default: "google")
-  -u --upload <platform>              Upload to platform
-  -g --tags <tags...>                 Tags for video title (default: ["shorts","reddit","redditstories"])
-  -a --bgAudio <bgAudio>              Background audio (default: "https://www.youtube.com/watch?v=xy_NKN75Jhw")
-  -v --bgVideo <bgVideo>              Background video (default: "https://www.youtube.com/watch?v=XBIaqOm0RKQ")
-  -h, --help                          display help for command
+git clone https://github.com/yogeshdofficial/reddit2shorts.git
+cd reddit2shorts
+mv .env.example .env    # edit .env with your credentials (see below)
+pnpm install            # or npm install
+npx puppeteer browsers install chrome
 ```
 
-## Authors
+Run a quick example
 
-- [@yogeshdofficial](https://www.github.com/yogeshdofficial)
+```bash
+ts-node --logError src/cli.ts --random --upload youtube
+```
 
-## Acknowledgements
-Since it is my first difficult project, any help and advice is much appreciated
+---
+
+## Configuration
+
+All runtime secrets and options are provided via environment variables. Copy `.env.example` to `.env` and fill in values.
+
+Required variables (short description):
+
+- `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`, `REDDIT_USERNAME`, `REDDIT_PASSWORD` — Reddit API credentials (create a "script" app at https://www.reddit.com/prefs/apps).
+- `GOOGLE_CREDENTIALS` — Service account JSON for Google APIs. You can set the JSON content directly or point to a file depending on your runtime; ensure the Text-to-Speech and YouTube Data APIs are enabled.
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_ACCESS_TOKEN`, `GOOGLE_REFRESH_TOKEN` — OAuth credentials for flows that require user consent (refer to Google OAuth docs or OAuth Playground).
+- `GEMINI_API_KEY` — Optional (if using Gemini or other LLM integrations).
+- `TIKTOK_SESSION_ID` — Required only when using the TikTok TTS implementation.
+
+Security note: Do not commit `.env` or credential files to source control. Use secret managers for production deployments.
+
+Helpful links
+
+- Google Cloud Console: https://console.cloud.google.com/
+- Reddit apps: https://www.reddit.com/prefs/apps
+
+---
+
+## Usage
+
+Run `ts-node src/cli.ts --help` to view all options. Common flags:
+
+- `--random` : choose a random text post from configured subreddits
+- `--postId <id>` : create a short from a specific post id
+- `--commentsCount <n>` : number of top comments to include (default: 10)
+- `--tts google|tiktok` : select TTS provider (default: `google`)
+- `--upload youtube` : upload the created short to YouTube
+
+Example (generate & upload):
+
+```bash
+ts-node src/cli.ts --random --commentsCount 8 --tts google --upload youtube
+```
+
+Example (generate a short from a post id without upload):
+
+```bash
+ts-node src/cli.ts --postId t3_abcdef --commentsCount 5 --tts tiktok
+```
+
+### Background assets
+
+You can specify background audio/video URLs via CLI options (`--bgAudio`, `--bgVideo`) or use the defaults in the code. The CLI accepts multiple values for each and will randomly select one when producing the short.
+
+---
+
+## Troubleshooting
+
+- If audio/video generation fails, verify `ffmpeg` and `yt-dlp` are installed and reachable via PATH.
+- For Google TTS/YouTube upload errors, confirm your `GOOGLE_CREDENTIALS` and OAuth tokens are valid and that the corresponding APIs are enabled.
+- If Puppeteer fails to download browsers, run `npx puppeteer browsers install chrome` or check network/proxy settings.
+
+---
+
+## Contributing
+
+Contributions welcome — please open issues or pull requests. Suggested workflow:
+
+1. Fork the repository
+2. Create a feature branch
+3. Add tests where applicable
+4. Open a PR with a clear description
+
+---
+
+## License & Contact
+
+MIT License — see `LICENSE` file (if present).
+
+Maintainer: @yogeshdofficial — https://github.com/yogeshdofficial
