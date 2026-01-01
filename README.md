@@ -42,7 +42,8 @@ get by following this [article](https://amandevelops.medium.com/how-to-generate-
 `GOOGLE_CLIENT_ID`  
 `GOOGLE_CLIENT_SECRET`  
 `GOOGLE_ACCESS_TOKEN`  
-`GOOGLE_REFRESH_TOKEN` 
+`GOOGLE_REFRESH_TOKEN`   
+
 get by installing [extension](https://cookie-editor.com/) and getting cookie from tiktok webiste's sessionid  
 `TIKTOK_SESSION_ID`  
 ## Usage/Examples
